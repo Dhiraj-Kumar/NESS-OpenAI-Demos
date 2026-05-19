@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace SmartAssistant.Controllers
+namespace SmartAssistant.Models
 {
     public class SentimentResult
     {
