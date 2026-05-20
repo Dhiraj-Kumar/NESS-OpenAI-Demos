@@ -5,6 +5,8 @@ using SmartAssistant.Models;
 using System.Text.Json;
 using Microsoft.Extensions.AI;
 using ChatMessage = OpenAI.Chat.ChatMessage;
+using System.Diagnostics;
+using Serilog;
 
 namespace SmartAssistant.Controllers
 {
@@ -45,6 +47,10 @@ namespace SmartAssistant.Controllers
                     """)
             };
 
+            var stopwatch = Stopwatch.StartNew();
+
+            Log.Information("AI call started");
+
             ChatCompletion response = await _chatClient.CompleteChatAsync(
                 messages,
                 new ChatCompletionOptions { ResponseFormat = format }
@@ -54,6 +60,10 @@ namespace SmartAssistant.Controllers
                 response.Content[0].Text,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             );
+
+            stopwatch.Stop();
+
+            Log.Information("AI Call Completed. Operation={Operation}, Model={Model}, InputTokens={InputTokens}, OutputTokens={OutputTokens}, TimeTaken={TimeTaken}", "Classify", "gpt-4o-mini", response.Usage.InputTokenCount, response.Usage.OutputTokenCount, stopwatch.Elapsed.TotalMilliseconds);
 
             return Ok(classified);
         }

@@ -5,6 +5,7 @@ using OpenAI;
 using OpenAI.Chat;
 using SmartAssistant.Services;
 using System.Text;
+using Serilog;
 
 namespace SmartAssistant
 {
@@ -20,6 +21,13 @@ namespace SmartAssistant
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            Log.Logger = new LoggerConfiguration()
+                .WriteTo.File("logs/smart-assistant-logs.txt")
+                .CreateLogger();
+
+            builder.Host.UseSerilog();
+
             builder.Services.AddSingleton<OpenAIClient>(options =>
             {
                 return new OpenAIClient(builder.Configuration["OPEN_API_KEY"]);
